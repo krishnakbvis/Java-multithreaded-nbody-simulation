@@ -32,13 +32,14 @@ public class Simulation {
     }
 
 
-
     public static void multiThreaded() {
-        ArrayList<Thread> computeThreads = new ArrayList<>();
-        for (int chunkNum = 0; chunkNum < numWorkers; chunkNum++) {
-            ForceComputation forceComp = new ForceComputation();
-            forceComp.setWorkChunk(chunkNum);
-            computeThreads.add(new Thread(forceComp));
+        Thread[][] computeThreads = new Thread[numWorkers][numWorkers];
+        for (int indexY = 0; indexY < numWorkers; indexY++) {
+            for (int indexX = 0; indexX < numWorkers; indexX++) {
+                ForceComputation forceComp = new ForceComputation();
+                forceComp.setThreadIdx(indexX, indexY);
+                computeThreads[indexX][indexY] = new Thread(forceComp);
+            }
         }
 
         for (Thread t : computeThreads) {
