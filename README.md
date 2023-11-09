@@ -1,0 +1,5 @@
+# Java-multithreaded-nbody-simulation
+
+I used an existing n-body simulation which I made in MATLAB, converted it to Java, and implemented basic multithreading to delegate subtasks within the nested loop of the sequential program to separate threads.
+The program computes the total force on each object in an n-body simulation using the Lennard-Jones intermolecular potential. The workload of the program is divided between sections of the outer loop and the inner loop. Thus, the threads are arranged in a grid. Different threads work on different parts of the loop, indexed by threadIdxX and threadIdxY. X corresponds to parts of the inner loop, and Y corresponds to parts of the outer loop. The run() method computes a section of the total force and adds it to the current bodyForces array in the right entry.
+Overall, this separation of tasks in each thread leads to a performance 8 times better than sequential code running on the main thread, and 2x better than threads only working on the outer loop.
