@@ -1,4 +1,4 @@
-public class Vector extends Thread{
+public class Vector {
     double xComp;
     double yComp;
 
@@ -34,4 +34,9 @@ public class Vector extends Thread{
         return new Vector(this.xComp/this.magnitude(), this.yComp/this.magnitude());
     }
 
+
+    @Override
+    public String toString() {
+        return "<" + xComp + "," + yComp + ">";
+    }
 }

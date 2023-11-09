@@ -5,45 +5,39 @@ import java.util.Random;
 // Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
 // then press Enter. You can now see whitespace characters in your code.
 public class Simulation {
-    Random rand = new Random();
+    static Random rand = new Random();
 
     double time = 0;
-    double deltaT = 10^-4;
+    double deltaT = Math.pow(10, -4);
 
-    static int n = 10;
-    double r = 0.3;
+    static final int n = 200;
+    static final double r = 0.3;
 
-    double[] xPositions = new double[n];
-    double[] yPositions = new double[n];
-    double[] xVelocities = new double[n];
-    double[] yVelocities = new double[n];
+    static double[] xPositions = new double[n];
+    static double[] yPositions = new double[n];
+    static double[] xVelocities = new double[n];
+    static double[] yVelocities = new double[n];
+    static Vector[] bodyForces = new Vector[n];
 
-
-    public void initializeArrays() {
+    public static void initializeArrays() {
         for (int i = 0; i < n; i++) {
-            xPositions[i] = rand.nextDouble();
-            yPositions[i] = rand.nextDouble();
-            xVelocities[i] = rand.nextDouble();
-            yVelocities[i] = rand.nextDouble();
+            xPositions[i] = i;
+            yPositions[i] = i;
+            xVelocities[i] = 0;
+            yVelocities[i] = 0;
+            bodyForces[i] = new Vector(0,0);
         }
     }
 
-    Vector[] bodyForces = new Vector[n];
 
 
-    public static void main(String[] args) {
-        Simulation sim = new Simulation();
-        sim.initializeArrays();
+    public static void multiThreaded() {
         ArrayList<Thread> computeThreads = new ArrayList<>();
-
 
         for (int bodyNum = 0; bodyNum < n; bodyNum++) {
             ForceComputation forceComp = new ForceComputation();
             forceComp.setBodyNum(bodyNum);
-            forceComp.totalForce = new Vector(0,0);
-            Thread forceCompute = new Thread(forceComp, "body #" + bodyNum + ": running ");
-
-            computeThreads.add(forceCompute);
+            computeThreads.add(new Thread(forceComp));
         }
 
         for (Thread t : computeThreads) {
@@ -57,10 +51,26 @@ public class Simulation {
                 e.printStackTrace();
             }
         }
+    }
 
-        System.out.println(Arrays.toString(sim.bodyForces));
+    public static void sequential() {
+        for (int bodyNum = 0; bodyNum < n; bodyNum++) {
+            ForceComputation forceComp = new ForceComputation();
+            forceComp.computeOneBody(bodyNum, r, n);
+        }
+    }
 
+    public static void main(String[] args) {
 
+        final long startTime = System.currentTimeMillis();
+        initializeArrays();
+
+        //multiThreaded();
+        sequential();
+
+        final long endTime = System.currentTimeMillis();
+        System.out.println("Total execution time: " + (endTime - startTime));
+        System.out.println(Arrays.toString(bodyForces));
 
     }
 
