@@ -98,14 +98,11 @@ public class Simulation {
 
     public static void main(String[] args) {
         initializeArrays();
-
-        final long startTime = System.currentTimeMillis();
+        final long startTime2 = System.currentTimeMillis();
         doublyThreaded();
-//        singlyThreaded();
-//        sequential();
-        final long endTime = System.currentTimeMillis();
+        final long endTime2 = System.currentTimeMillis();
+        System.out.println("fully threaded force computation time: " + (endTime2 - startTime2));
 
-        System.out.println("Total execution time: " + (endTime - startTime));
 
     }
 
