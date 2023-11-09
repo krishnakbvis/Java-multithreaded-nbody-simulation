@@ -10,8 +10,8 @@ public class Simulation {
     double time = 0;
     double deltaT = Math.pow(10, -4);
 
-    static final int n = 20000;
-    static int chunkSize = 1000;
+    static final int n = 40000;
+    static int chunkSize = 5000;
     static int numWorkers = n/chunkSize;
     static final double r = 0.3;
 
@@ -32,30 +32,62 @@ public class Simulation {
     }
 
 
-    public static void multiThreaded() {
+    public static void doublyThreaded() {
         Thread[][] computeThreads = new Thread[numWorkers][numWorkers];
         for (int indexY = 0; indexY < numWorkers; indexY++) {
             for (int indexX = 0; indexX < numWorkers; indexX++) {
                 ForceComputation forceComp = new ForceComputation();
                 forceComp.setThreadIdx(indexX, indexY);
-                computeThreads[indexX][indexY] = new Thread(forceComp);
+                computeThreads[indexX][indexY] = new Thread(forceComp); // fill computeThreads array
             }
         }
 
-        for (Thread t : computeThreads) {
-            t.start();
+
+        //start threads
+        for (int i = 0; i < numWorkers; i++) {
+            for (int j = 0; j < numWorkers; j++) {
+                computeThreads[i][j].start();
+            }
         }
 
 
-        // this join() operation is a source of overhead
-        for (Thread t : computeThreads){
+        // synchronize threads
+        for (int i = 0; i < numWorkers; i++) {
+            for (int j = 0; j < numWorkers; j++) {
+                try {
+                    computeThreads[i][j].join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+
+    public static void singlyThreaded() {
+        Thread[] computeThreads = new Thread[numWorkers];
+        for (int indexY = 0; indexY < numWorkers; indexY++) {
+            ForceComputation forceComp = new ForceComputation();
+            forceComp.setThreadIdx(indexY);
+            computeThreads[indexY] = new Thread(forceComp); // fill computeThreads array
+
+        }
+
+        //start threads
+        for (int i = 0; i < numWorkers; i++) {
+            computeThreads[i].start();
+        }
+
+        // synchronize threads
+        for (int i = 0; i < numWorkers; i++) {
             try {
-                t.join();
-            } catch (InterruptedException e){
+                computeThreads[i].join();
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
     }
+
 
     public static void sequential() {
         for (int bodyNum = 0; bodyNum < n; bodyNum++) {
@@ -68,9 +100,11 @@ public class Simulation {
         initializeArrays();
 
         final long startTime = System.currentTimeMillis();
-        multiThreaded();
-        //sequential();
+        doublyThreaded();
+//        singlyThreaded();
+//        sequential();
         final long endTime = System.currentTimeMillis();
+
         System.out.println("Total execution time: " + (endTime - startTime));
 
     }
