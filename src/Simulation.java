@@ -10,8 +10,8 @@ public class Simulation {
     double time = 0;
     double deltaT = Math.pow(10, -4);
 
-    static final int n = 200;
-    static int chunkSize = 20;
+    static final int n = 20000;
+    static int chunkSize = 1000;
     static int numWorkers = n/chunkSize;
     static final double r = 0.3;
 
@@ -64,16 +64,13 @@ public class Simulation {
     }
 
     public static void main(String[] args) {
-
-        final long startTime = System.currentTimeMillis();
         initializeArrays();
 
+        final long startTime = System.currentTimeMillis();
         multiThreaded();
         //sequential();
-
         final long endTime = System.currentTimeMillis();
         System.out.println("Total execution time: " + (endTime - startTime));
-        System.out.println(Arrays.toString(bodyForces));
 
     }
 

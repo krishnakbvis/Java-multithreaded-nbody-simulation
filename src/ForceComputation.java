@@ -8,13 +8,10 @@ public class ForceComputation extends Simulation implements Runnable {
     // each thread does computation on one chunk of bodies (given by n/numWorkers)
     synchronized
     public void workChunk(int chunkNum, double r, int n) {
-        Vector totalForce = new Vector(0,0);
-        int lowerBound = chunkNum*chunkSize+1;
-        int upperBound = (chunkNum+1)*chunkSize;
-        System.out.println(lowerBound);
-        System.out.println(upperBound);
-
-        for (int j = chunkNum*chunkSize+1; j < (chunkNum+1)*chunkSize; j++) {
+        int lowerBound = chunkNum*chunkSize;
+        int upperBound = (chunkNum+1)*chunkSize-1;
+        for (int j = lowerBound; j < upperBound; j++) {
+            Vector totalForce = new Vector(0,0);
             for (int i = 0; i < n; i++) {
                 if (i != j) {
                     Vector firstMassPos = new Vector(xPositions[i], yPositions[i]);
