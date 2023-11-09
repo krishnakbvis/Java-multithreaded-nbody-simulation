@@ -11,6 +11,8 @@ public class Simulation {
     double deltaT = Math.pow(10, -4);
 
     static final int n = 200;
+    static int chunkSize = 20;
+    static int numWorkers = n/chunkSize;
     static final double r = 0.3;
 
     static double[] xPositions = new double[n];
@@ -33,10 +35,9 @@ public class Simulation {
 
     public static void multiThreaded() {
         ArrayList<Thread> computeThreads = new ArrayList<>();
-
-        for (int bodyNum = 0; bodyNum < n; bodyNum++) {
+        for (int chunkNum = 0; chunkNum < numWorkers; chunkNum++) {
             ForceComputation forceComp = new ForceComputation();
-            forceComp.setBodyNum(bodyNum);
+            forceComp.setWorkChunk(chunkNum);
             computeThreads.add(new Thread(forceComp));
         }
 
@@ -44,6 +45,8 @@ public class Simulation {
             t.start();
         }
 
+
+        // this join() operation is a source of overhead
         for (Thread t : computeThreads){
             try {
                 t.join();
@@ -65,8 +68,8 @@ public class Simulation {
         final long startTime = System.currentTimeMillis();
         initializeArrays();
 
-        //multiThreaded();
-        sequential();
+        multiThreaded();
+        //sequential();
 
         final long endTime = System.currentTimeMillis();
         System.out.println("Total execution time: " + (endTime - startTime));
