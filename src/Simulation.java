@@ -10,8 +10,8 @@ public class Simulation {
     double time = 0;
     double deltaT = Math.pow(10, -4);
 
-    static final int n = 40000;
-    static int chunkSize = 5000;
+    static final int n = 100000;
+    static int chunkSize = 10000;
     static int numWorkers = n/chunkSize;
     static final double r = 0.3;
 
@@ -100,9 +100,10 @@ public class Simulation {
         initializeArrays();
         final long startTime2 = System.currentTimeMillis();
         doublyThreaded();
+//        sequential();
+//        singlyThreaded();
         final long endTime2 = System.currentTimeMillis();
         System.out.println("fully threaded force computation time: " + (endTime2 - startTime2));
-
 
     }
 

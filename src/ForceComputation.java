@@ -2,18 +2,19 @@ public class ForceComputation extends Simulation implements Runnable {
 
     private int indexX; // gives the chunk of word that the thread is performing on
     private int indexY;
+
+    private int bodyNum;
     // divide up work such that
     // each thread does computation on one chunk of bodies (given by n/numWorkers)
 
     // make thread[outer][inner] work on a section of the total force computation;
-    synchronized
     public void doublyThreaded(int indexY, int indexX, double r, int n) {
         int lowerOuter = indexY*chunkSize;
-        int upperOuter = (indexY+1)*chunkSize-1;
+        int upperOuter = (indexY+1)*chunkSize;
         for (int j = lowerOuter; j < upperOuter; j++) {
             Vector totalForce = new Vector(0,0);
             int lowerInner = indexX*chunkSize;
-            int upperInner = (indexX + 1)*chunkSize-1;
+            int upperInner = (indexX + 1)*chunkSize;
             for (int i = lowerInner; i < upperInner; i++) {
                 if (i != j) {
                     Vector firstMassPos = new Vector(xPositions[i], yPositions[i]);
@@ -29,10 +30,10 @@ public class ForceComputation extends Simulation implements Runnable {
         }
     }
 
-    synchronized
+
     public void singlyThreaded(int indexY, double r, int n) {
         int lowerOuter = indexY*chunkSize;
-        int upperOuter = (indexY+1)*chunkSize-1;
+        int upperOuter = (indexY+1)*chunkSize;
         for (int j = lowerOuter; j < upperOuter; j++) {
             Vector totalForce = new Vector(0,0);
             for (int i = 0; i < n; i++) {

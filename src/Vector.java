@@ -6,6 +6,7 @@ public class Vector {
         this.xComp = x;
         this.yComp = y;
     }
+
     public Vector add(Vector v){
         return new Vector(this.xComp + v.xComp, this.yComp + v.yComp);
     }
